@@ -14,6 +14,7 @@ before_install:
   - composer --version
 
 install:
+  - composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer
   - composer require drupal/coder
   - phpcs --config-set installed_paths $TRAVIS_BUILD_DIR/vendor/drupal/coder/coder_sniffer
 
