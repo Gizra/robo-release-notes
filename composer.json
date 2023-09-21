@@ -1,0 +1,13 @@
+{
+    "name": "Gizra/robo-release-notes",
+    "description": "Release notes Robo command as PHP trait",
+    "type": "library",
+    "require": {
+        "consolidation/robo": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "GizraRobo\\": "src/"
+        }
+    }
+}
