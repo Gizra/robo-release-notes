@@ -1,5 +1,5 @@
 {
-    "name": "Gizra/robo-release-notes",
+    "name": "gizra/robo-release-notes",
     "description": "Release notes Robo command as PHP trait",
     "type": "library",
     "require": {
