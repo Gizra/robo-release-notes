@@ -9,6 +9,7 @@ cache:
     - $HOME/.composer/cache/files
 
 before_install:
+  - export PATH="$HOME/.config/composer/vendor/bin:$HOME/.composer/vendor/bin:$HOME/vendor/bin:$TRAVIS_BUILD_DIR/vendor/bin:$PATH"
   - phpenv config-rm xdebug.ini
   - composer self-update
   - composer --version
