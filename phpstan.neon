@@ -1,6 +1,3 @@
-includes:
-  - /home/travis/.config/composer/vendor/mglaman/phpstan-drupal/extension.neon
-  - /home/travis/.config/composer/vendor/phpstan/phpstan-deprecation-rules/rules.neon
 parameters:
   level: 6
   checkMissingIterableValueType: false
