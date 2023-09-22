@@ -1,0 +1,10 @@
+parameters:
+  level: 6
+  checkMissingIterableValueType: false
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    - '#has no return type specified.#'
+    - '#Access to an undefined property Drupal\\Core\\Field\\FieldItemListInterface::\$value.#'
+    - '#Access to an undefined property Drupal\\Core\\Field\\FieldItemInterface::\$value.#'
+  paths:
+    - src
