@@ -13,20 +13,41 @@ cache:
 before_script:
   - composer install --no-interaction --prefer-dist --no-progress
 
-script:
-  - composer test
-  - composer cs
+stages:
+  - lint
+  - analysis
+  - test
 
 jobs:
   include:
-    - stage: "Code Coverage"
+    - stage: lint
+      name: "Code Standards"
+      php: 8.3
+      script:
+        - composer cs
+
+    - stage: test
+      name: "PHPUnit Tests (PHP 8.3)"
+      php: 8.3
+      script:
+        - composer test
+
+    - stage: test
+      name: "PHPUnit Tests (PHP 8.4)"
+      php: 8.4
+      script:
+        - composer test
+
+    - stage: test
+      name: "Code Coverage"
       php: 8.3
       script:
         - composer test -- --coverage-clover=coverage.xml
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
-    - stage: "Static Analysis"
+    - stage: analysis
+      name: "Static Analysis"
       php: 8.3
       script:
         - composer require --dev phpstan/phpstan ^1.0
