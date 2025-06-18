@@ -38,14 +38,6 @@ jobs:
       script:
         - composer test
 
-    - stage: test
-      name: "Code Coverage"
-      php: 8.3
-      script:
-        - composer test -- --coverage-clover=coverage.xml
-      after_success:
-        - bash <(curl -s https://codecov.io/bash)
-
     - stage: analysis
       name: "Static Analysis"
       php: 8.3
