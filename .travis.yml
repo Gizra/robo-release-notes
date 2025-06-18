@@ -1,26 +1,36 @@
 language: php
 
 php:
+  - 7.4
   - 8.0
   - 8.1
+  - 8.2
 
 cache:
   directories:
-    - $HOME/.composer/cache/files
+    - $HOME/.composer/cache
 
-before_install:
-  - export PATH="$HOME/.config/composer/vendor/bin:$HOME/.composer/vendor/bin:$HOME/vendor/bin:$TRAVIS_BUILD_DIR/vendor/bin:$PATH"
-  - phpenv config-rm xdebug.ini
-  - composer self-update
-  - composer --version
-
-install:
-  - composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-  - composer global require drupal/coder
-  - composer global require mglaman/phpstan-drupal
+before_script:
+  - composer install --no-interaction --prefer-dist --no-progress
 
 script:
-  - find . -name \*.php -exec php -l {} \;
-  - phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,info --ignore=node_modules,bower_components,vendor .
-  - phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,info --ignore=node_modules,bower_components,vendor .
-  - phpstan
+  - composer test
+  - composer cs
+
+jobs:
+  include:
+    - stage: "Code Coverage"
+      php: 8.1
+      script:
+        - composer test -- --coverage-clover=coverage.xml
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+
+    - stage: "Static Analysis"
+      php: 8.1
+      script:
+        - composer require --dev phpstan/phpstan ^1.0
+        - vendor/bin/phpstan analyse src --level=5
+
+notifications:
+  email: false
