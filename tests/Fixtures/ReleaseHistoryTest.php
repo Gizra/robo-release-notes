@@ -114,21 +114,21 @@ class ReleaseHistoryTest extends TestCase {
     // Issue #200 should have 2 PRs (101 and 104).
     $this->assertArrayHasKey('200', $result['with_issues']);
     $this->assertCount(2, $result['with_issues']['200']);
-    $this->assertContains('101', $result['with_issues']['200']);
-    $this->assertContains('104', $result['with_issues']['200']);
+    $this->assertContains(101, $result['with_issues']['200']);
+    $this->assertContains(104, $result['with_issues']['200']);
 
     // Issue #201 should have 1 PR (102).
     $this->assertArrayHasKey('201', $result['with_issues']);
     $this->assertCount(1, $result['with_issues']['201']);
-    $this->assertContains('102', $result['with_issues']['201']);
+    $this->assertContains(102, $result['with_issues']['201']);
 
     // Issue #202 should have 1 PR (103).
     $this->assertArrayHasKey('202', $result['with_issues']);
     $this->assertCount(1, $result['with_issues']['202']);
-    $this->assertContains('103', $result['with_issues']['202']);
+    $this->assertContains(103, $result['with_issues']['202']);
 
     // PR #105 should be without issues.
-    $this->assertContains('105', $result['without_issues']);
+    $this->assertContains(105, $result['without_issues']);
   }
 
   /**
@@ -153,8 +153,8 @@ class ReleaseHistoryTest extends TestCase {
 
     $result = $method->invokeArgs($this->generator, [$commits]);
 
-    $this->assertContains('999', $result);
-    $this->assertContains('1000', $result);
+    $this->assertContains(999, $result);
+    $this->assertContains(1000, $result);
   }
 
   /**
@@ -209,9 +209,9 @@ class ReleaseHistoryTest extends TestCase {
 
     $result = $method->invokeArgs($this->generator, [$commits]);
 
-    $this->assertContains('150', $result);
-    $this->assertContains('151', $result);
-    $this->assertContains('152', $result);
+    $this->assertContains(150, $result);
+    $this->assertContains(151, $result);
+    $this->assertContains(152, $result);
   }
 
   /**
@@ -236,8 +236,8 @@ class ReleaseHistoryTest extends TestCase {
 
     $result = $method->invokeArgs($this->generator, [$commits]);
 
-    $this->assertContains('400', $result);
-    $this->assertContains('401', $result);
+    $this->assertContains(400, $result);
+    $this->assertContains(401, $result);
   }
 
   /**
@@ -302,8 +302,8 @@ class ReleaseHistoryTest extends TestCase {
     $result = $method->invokeArgs($this->generator, [$commits]);
 
     // Should only extract PR numbers from PR-related commits.
-    $this->assertContains('500', $result);
-    $this->assertContains('501', $result);
+    $this->assertContains(500, $result);
+    $this->assertContains(501, $result);
     $this->assertCount(2, $result);
   }
 

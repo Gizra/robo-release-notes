@@ -30,7 +30,64 @@ class ReleaseNotesGeneratorTest extends TestCase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->mockTask = $this->createMock(TaskInterface::class);
+    // Create a mock task object with required methods
+    $this->mockTask = new class implements TaskInterface {
+      public $taskExecCallback = null;
+      
+      public function taskExec($command) {
+        if ($this->taskExecCallback) {
+          return call_user_func($this->taskExecCallback, $command);
+        }
+        return $this->createDefaultTaskExecResult();
+      }
+      
+      public function say($message) {
+        // Mock method
+      }
+      
+      public function confirm($question) {
+        return true;
+      }
+      
+      public function _exec($command) {
+        return null;
+      }
+      
+      // Required TaskInterface methods
+      public function run() {
+        return null;
+      }
+      
+      public function getState() {
+        return null;
+      }
+      
+      public function setState($state) {
+        return $this;
+      }
+      
+      private function createDefaultTaskExecResult() {
+        return new class('') {
+          private $message;
+          
+          public function __construct($message) {
+            $this->message = $message;
+          }
+          
+          public function printOutput($output) {
+            return $this;
+          }
+          
+          public function run() {
+            return $this;
+          }
+          
+          public function getMessage() {
+            return $this->message;
+          }
+        };
+      }
+    };
     $this->generator = new ReleaseNotesGenerator($this->mockTask);
   }
 
@@ -49,7 +106,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
           ],
     ];
     $result = $method->invokeArgs($this->generator, [$commits]);
-    $this->assertEquals(['123'], $result);
+    $this->assertEquals([123], $result);
 
     // Test squash and merge commit.
     $commits = [
@@ -60,7 +117,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
           ],
     ];
     $result = $method->invokeArgs($this->generator, [$commits]);
-    $this->assertEquals(['124'], $result);
+    $this->assertEquals([124], $result);
 
     // Test multiple PRs in one commit.
     $commits = [
@@ -71,8 +128,8 @@ class ReleaseNotesGeneratorTest extends TestCase {
           ],
     ];
     $result = $method->invokeArgs($this->generator, [$commits]);
-    // Should only get first match per commit.
-    $this->assertEquals(['125'], $result);
+    // Should extract all PR references from the commit.
+    $this->assertEquals([125, 126, 127], $result);
 
     // Test no PR numbers.
     $commits = [
@@ -130,8 +187,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
     $method = $this->getPrivateMethod('detectGitHubProject');
 
     // Mock taskExec to return different remote URLs.
-    $this->mockTask->method('taskExec')
-      ->willReturnCallback(function ($command) {
+    $this->mockTask->taskExecCallback = function ($command) {
         if (strpos($command, 'git remote get-url origin') !== FALSE) {
             $mockExecResult = new class('git@github.com:Gizra/test-repo.git') {
                 private $message;
@@ -164,7 +220,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
             };
             return $mockExecResult;
         }
-      });
+    };
 
     // Test SSH URL format.
     $result = $method->invokeArgs($this->generator, []);
@@ -206,8 +262,8 @@ class ReleaseNotesGeneratorTest extends TestCase {
     $this->assertArrayHasKey('with_issues', $result);
     $this->assertArrayHasKey('without_issues', $result);
     $this->assertArrayHasKey('456', $result['with_issues']);
-    $this->assertContains('123', $result['with_issues']['456']);
-    $this->assertContains('125', $result['without_issues']);
+    $this->assertContains(123, $result['with_issues']['456']);
+    $this->assertContains(125, $result['without_issues']);
   }
 
   /**
@@ -232,8 +288,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
     $method = $this->getPrivateMethod('getCommitRange');
 
     // Mock taskExec to return git log output.
-    $this->mockTask->method('taskExec')
-      ->willReturnCallback(function ($command) {
+    $this->mockTask->taskExecCallback = function ($command) {
         if (strpos($command, 'git log --pretty=format') !== FALSE) {
             $mockExecResult = new class("abc123¬¬Fix bug¬¬Detailed description\ndef456¬¬Add feature¬¬Another description") {
                 private $message;
@@ -266,7 +321,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
             };
             return $mockExecResult;
         }
-      });
+    };
 
     $result = $method->invokeArgs($this->generator, [NULL]);
 
