@@ -4,6 +4,8 @@ php:
   - 8.3
   - 8.4
 
+dist: jammy
+
 cache:
   directories:
     - $HOME/.composer/cache
