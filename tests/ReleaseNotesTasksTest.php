@@ -68,7 +68,7 @@ class ReleaseNotesTasksTest extends TestCase {
        * @param string $message
        *   Message to output.
        */
-      public function say($message) {
+      public function say(string $message): void {
         echo $message . "\n";
       }
 
@@ -91,10 +91,10 @@ class ReleaseNotesTasksTest extends TestCase {
        * @param string $command
        *   Command to execute.
        *
-       * @return null
-       *   Always returns NULL for tests.
+       * @return bool
+       *   Always returns TRUE for tests.
        */
-      public function execCommand($command) {
+      public function execCommand(string $command): bool {
         return TRUE;
       }
 
@@ -108,22 +108,13 @@ class ReleaseNotesTasksTest extends TestCase {
        *   Mock task execution object.
        */
       public function taskExec($command) {
-        return new class($command) {
-          /**
-           * Command storage.
-           *
-           * @var string
-           */
-          private $command;
+        return new class() {
 
           /**
            * Mock constructor.
-           *
-           * @param string $command
-           *   Command to store.
            */
-          public function __construct($command) {
-            $this->command = $command;
+          public function __construct() {
+            // No-op constructor for mock object.
           }
 
           /**
@@ -160,7 +151,7 @@ class ReleaseNotesTasksTest extends TestCase {
                * @param string $message
                *   Message to store.
                */
-              public function __construct($message) {
+              public function __construct(string $message) {
                 $this->message = $message;
               }
 

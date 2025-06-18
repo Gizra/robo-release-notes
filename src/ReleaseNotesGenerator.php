@@ -3,7 +3,6 @@
 namespace Gizra\RoboReleaseNotes;
 
 use Robo\Contract\TaskInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Release notes generator that extracts PR and issue data from GitHub.
@@ -122,7 +121,7 @@ class ReleaseNotesGenerator {
   /**
    * Detect GitHub organization and project from git remote.
    *
-   * @return array
+   * @return array{0: string|null, 1: string|null}
    *   Array containing [organization, project] or [null, null] if not found.
    */
   private function detectGitHubProject(): array {
@@ -170,7 +169,7 @@ class ReleaseNotesGenerator {
    * @param string|null $tag
    *   Optional tag to compare from.
    *
-   * @return array
+   * @return array<int, array{hash: string, subject: string, body: string}>
    *   Array of commit data.
    */
   private function getCommitRange(?string $tag): array {
@@ -210,10 +209,10 @@ class ReleaseNotesGenerator {
   /**
    * Extract PR numbers from commit messages.
    *
-   * @param array $commits
+   * @param array<int, array{hash: string, subject: string, body: string}> $commits
    *   Array of commit data.
    *
-   * @return array
+   * @return array<int, string>
    *   Array of PR numbers.
    */
   private function extractPrNumbers(array $commits): array {
@@ -253,10 +252,10 @@ class ReleaseNotesGenerator {
    *   GitHub organization.
    * @param string $project
    *   GitHub project name.
-   * @param array $prNumbers
+   * @param array<int, string> $prNumbers
    *   Array of PR numbers.
    *
-   * @return array
+   * @return array{pull_requests: array<string, object>, issues: array<string, object>, contributors: array<string, int>, stats: array{additions: int, deletions: int, changed_files: int}}
    *   Release data structure.
    */
   private function fetchReleaseData(string $org, string $project, array $prNumbers): array {
@@ -329,7 +328,7 @@ class ReleaseNotesGenerator {
    * @param object $prData
    *   PR data from GitHub API.
    *
-   * @return array
+   * @return array<int, string>
    *   Array of issue numbers.
    */
   private function extractIssueNumbers(object $prData): array {
@@ -365,7 +364,7 @@ class ReleaseNotesGenerator {
   /**
    * Display formatted release notes.
    *
-   * @param array $releaseData
+   * @param array{pull_requests: array<string, object>, issues: array<string, object>, contributors: array<string, int>, stats: array{additions: int, deletions: int, changed_files: int}} $releaseData
    *   Release data structure.
    */
   private function displayReleaseNotes(array $releaseData): void {
@@ -417,10 +416,10 @@ class ReleaseNotesGenerator {
   /**
    * Group pull requests by their associated issues.
    *
-   * @param array $releaseData
+   * @param array{pull_requests: array<string, object>, issues: array<string, object>, contributors: array<string, int>, stats: array{additions: int, deletions: int, changed_files: int}} $releaseData
    *   Release data structure.
    *
-   * @return array
+   * @return array{with_issues: array<string, array<int, string>>, without_issues: array<int, string>}
    *   Grouped changes structure.
    */
   private function groupChangesByIssue(array $releaseData): array {
@@ -463,7 +462,7 @@ class ReleaseNotesGenerator {
    *
    * @param string $title
    *   Section title.
-   * @param array $lines
+   * @param array<mixed, string> $lines
    *   Bullet points.
    * @param bool $printKey
    *   Whether to print the key of the array.
@@ -496,7 +495,7 @@ class ReleaseNotesGenerator {
    *
    * @throws \Exception
    */
-  private function githubApiGet(string $path) {
+  private function githubApiGet(string $path): ?object {
     $token = getenv('GITHUB_ACCESS_TOKEN');
     $username = getenv('GITHUB_USERNAME');
 
@@ -516,13 +515,13 @@ class ReleaseNotesGenerator {
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if ($httpCode === Response::HTTP_NOT_FOUND) {
+    if ($httpCode === 404) {
       // Resource not found - this might be expected,
       // e.g., PR was actually an issue.
       return NULL;
     }
 
-    if ($httpCode !== Response::HTTP_OK) {
+    if ($httpCode !== 200) {
       $errorDetail = $result ? json_decode($result) : 'Unknown error';
       throw new \Exception("GitHub API request failed (HTTP $httpCode): " . print_r($errorDetail, TRUE));
     }
@@ -572,7 +571,7 @@ class ReleaseNotesGenerator {
    * @return mixed
    *   Task execution result or exec() return value.
    */
-  private function exec(string $command) {
+  private function exec(string $command): mixed {
     if (method_exists($this->task, '_exec')) {
       return $this->task->_exec($command);
     }
@@ -589,7 +588,7 @@ class ReleaseNotesGenerator {
    * @return mixed
    *   Task exec instance.
    */
-  private function taskExec(string $command) {
+  private function taskExec(string $command): mixed {
     if (method_exists($this->task, 'taskExec')) {
       return $this->task->taskExec($command);
     }
@@ -605,19 +604,12 @@ class ReleaseNotesGenerator {
       private $command;
 
       /**
-       * Whether to print output.
-       *
-       * @var bool
-       */
-      private $output = TRUE;
-
-      /**
        * Constructor.
        *
        * @param string $command
        *   The command to execute.
        */
-      public function __construct($command) {
+      public function __construct(string $command) {
         $this->command = $command;
       }
 
@@ -630,8 +622,7 @@ class ReleaseNotesGenerator {
        * @return $this
        *   Returns self for method chaining.
        */
-      public function printOutput($output) {
-        $this->output = $output;
+      public function printOutput(bool $output): self {
         return $this;
       }
 
@@ -641,34 +632,34 @@ class ReleaseNotesGenerator {
        * @return object
        *   Object containing the execution result.
        */
-      public function run() {
+      public function run(): object {
         $result = shell_exec($this->command);
         return new class($result) {
 
           /**
            * The result message.
            *
-           * @var string
+           * @var string|null
            */
-          private $message;
+          private ?string $message;
 
           /**
            * Constructor.
            *
-           * @param string $message
+           * @param string|null $message
            *   The message from command execution.
            */
-          public function __construct($message) {
+          public function __construct(?string $message) {
             $this->message = $message;
           }
 
           /**
            * Get the message from command execution.
            *
-           * @return string
+           * @return string|null
            *   The execution message.
            */
-          public function getMessage() {
+          public function getMessage(): ?string {
             return $this->message;
           }
 

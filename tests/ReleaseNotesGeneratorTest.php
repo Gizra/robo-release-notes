@@ -2,6 +2,7 @@
 
 namespace Gizra\RoboReleaseNotes\Tests;
 
+use Robo\Result;
 use Robo\Contract\TaskInterface;
 use Gizra\RoboReleaseNotes\ReleaseNotesGenerator;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +14,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
   /**
    * Mock task context.
    *
-   * @var \PHPUnit\Framework\MockObject\MockObject
+   * @var object
    */
   private $mockTask;
 
@@ -48,7 +49,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
        * @return object
        *   Mock task execution result.
        */
-      public function taskExec($command) {
+      public function taskExec(string $command): object {
         if ($this->taskExecCallback) {
           return call_user_func($this->taskExecCallback, $command);
         }
@@ -61,7 +62,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
        * @param string $message
        *   The message to output.
        */
-      public function say($message) {
+      public function say(string $message): void {
         // Mock method.
       }
 
@@ -94,7 +95,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
       /**
        * Required TaskInterface methods.
        */
-      public function run() {
+      public function run(): ?Result {
         return NULL;
       }
 
@@ -136,7 +137,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
            */
           private $message;
 
-          public function __construct($message) {
+          public function __construct(string $message) {
             $this->message = $message;
           }
 
@@ -286,7 +287,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
            */
           private $message;
 
-          public function __construct($message) {
+          public function __construct(string $message) {
             $this->message = $message;
           }
 
@@ -404,7 +405,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
            */
           private $message;
 
-          public function __construct($message) {
+          public function __construct(string $message) {
             $this->message = $message;
           }
 
