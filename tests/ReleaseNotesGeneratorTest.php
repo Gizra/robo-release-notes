@@ -30,63 +30,152 @@ class ReleaseNotesGeneratorTest extends TestCase {
   protected function setUp(): void {
     parent::setUp();
 
-    // Create a mock task object with required methods
-    $this->mockTask = new class implements TaskInterface {
-      public $taskExecCallback = null;
-      
+    // Create a mock task object with required methods.
+    $this->mockTask = new class() implements TaskInterface {
+      /**
+       * Callback function for taskExec method.
+       *
+       * @var callable|null
+       */
+      public $taskExecCallback = NULL;
+
+      /**
+       * Mock taskExec method.
+       *
+       * @param string $command
+       *   The command to execute.
+       *
+       * @return object
+       *   Mock task execution result.
+       */
       public function taskExec($command) {
         if ($this->taskExecCallback) {
           return call_user_func($this->taskExecCallback, $command);
         }
         return $this->createDefaultTaskExecResult();
       }
-      
+
+      /**
+       * Mock say method.
+       *
+       * @param string $message
+       *   The message to output.
+       */
       public function say($message) {
-        // Mock method
+        // Mock method.
       }
-      
+
+      /**
+       * Mock confirm method.
+       *
+       * @param string $question
+       *   The question to ask.
+       *
+       * @return bool
+       *   Always returns TRUE for tests.
+       */
       public function confirm($question) {
-        return true;
+        return TRUE;
       }
-      
-      public function _exec($command) {
-        return null;
+
+      /**
+       * Mock exec command method.
+       *
+       * @param string $command
+       *   The command to execute.
+       *
+       * @return null
+       *   Always returns NULL for tests.
+       */
+      public function execCommand($command) {
+        return NULL;
       }
-      
-      // Required TaskInterface methods
+
+      /**
+       * Required TaskInterface methods.
+       */
       public function run() {
-        return null;
+        return NULL;
       }
-      
+
+      /**
+       * Get task state.
+       *
+       * @return null
+       *   Always returns NULL.
+       */
       public function getState() {
-        return null;
+        return NULL;
       }
-      
+
+      /**
+       * Set task state.
+       *
+       * @param mixed $state
+       *   The state to set.
+       *
+       * @return $this
+       *   Returns self for chaining.
+       */
       public function setState($state) {
         return $this;
       }
-      
+
+      /**
+       * Create default task execution result.
+       *
+       * @return object
+       *   Mock task execution result object.
+       */
       private function createDefaultTaskExecResult() {
         return new class('') {
+          /**
+           * Message storage.
+           *
+           * @var string
+           */
           private $message;
-          
+
           public function __construct($message) {
             $this->message = $message;
           }
-          
+
+          /**
+           * Mock printOutput method.
+           *
+           * @param mixed $output
+           *   The output to print.
+           *
+           * @return $this
+           *   Returns self for chaining.
+           */
           public function printOutput($output) {
             return $this;
           }
-          
+
+          /**
+           * Mock run method.
+           *
+           * @return $this
+           *   Returns self for chaining.
+           */
           public function run() {
             return $this;
           }
-          
+
+          /**
+           * Get stored message.
+           *
+           * @return string
+           *   The stored message.
+           */
           public function getMessage() {
             return $this->message;
           }
+
         };
       }
+
     };
     $this->generator = new ReleaseNotesGenerator($this->mockTask);
   }
@@ -188,38 +277,55 @@ class ReleaseNotesGeneratorTest extends TestCase {
 
     // Mock taskExec to return different remote URLs.
     $this->mockTask->taskExecCallback = function ($command) {
-        if (strpos($command, 'git remote get-url origin') !== FALSE) {
-            $mockExecResult = new class('git@github.com:Gizra/test-repo.git') {
-                private $message;
+      if (strpos($command, 'git remote get-url origin') !== FALSE) {
+        $mockExecResult = new class('git@github.com:Gizra/test-repo.git') {
+          /**
+           * Message storage.
+           *
+           * @var string
+           */
+          private $message;
 
-              public function __construct($message) {
-                  $this->message = $message;
-              }
+          public function __construct($message) {
+            $this->message = $message;
+          }
 
-                /**
-                 *
-                 */
-              public function printOutput($output) {
-                    return $this;
-              }
+          /**
+           * Mock printOutput method.
+           *
+           * @param mixed $output
+           *   The output to print.
+           *
+           * @return $this
+           *   Returns self for chaining.
+           */
+          public function printOutput($output) {
+            return $this;
+          }
 
-                /**
-                 *
-                 */
-              public function run() {
-                    return $this;
-              }
+          /**
+           * Mock run method.
+           *
+           * @return $this
+           *   Returns self for chaining.
+           */
+          public function run() {
+            return $this;
+          }
 
-                /**
-                 *
-                 */
-              public function getMessage() {
-                    return $this->message;
-              }
+          /**
+           * Get stored message.
+           *
+           * @return string
+           *   The stored message.
+           */
+          public function getMessage() {
+            return $this->message;
+          }
 
-            };
-            return $mockExecResult;
-        }
+        };
+        return $mockExecResult;
+      }
     };
 
     // Test SSH URL format.
@@ -289,38 +395,55 @@ class ReleaseNotesGeneratorTest extends TestCase {
 
     // Mock taskExec to return git log output.
     $this->mockTask->taskExecCallback = function ($command) {
-        if (strpos($command, 'git log --pretty=format') !== FALSE) {
-            $mockExecResult = new class("abc123¬¬Fix bug¬¬Detailed description\ndef456¬¬Add feature¬¬Another description") {
-                private $message;
+      if (strpos($command, 'git log --pretty=format') !== FALSE) {
+        $mockExecResult = new class("abc123¬¬Fix bug¬¬Detailed description\ndef456¬¬Add feature¬¬Another description") {
+          /**
+           * Message storage.
+           *
+           * @var string
+           */
+          private $message;
 
-              public function __construct($message) {
-                  $this->message = $message;
-              }
+          public function __construct($message) {
+            $this->message = $message;
+          }
 
-                /**
-                 *
-                 */
-              public function printOutput($output) {
-                    return $this;
-              }
+          /**
+           * Mock printOutput method.
+           *
+           * @param mixed $output
+           *   The output to print.
+           *
+           * @return $this
+           *   Returns self for chaining.
+           */
+          public function printOutput($output) {
+            return $this;
+          }
 
-                /**
-                 *
-                 */
-              public function run() {
-                    return $this;
-              }
+          /**
+           * Mock run method.
+           *
+           * @return $this
+           *   Returns self for chaining.
+           */
+          public function run() {
+            return $this;
+          }
 
-                /**
-                 *
-                 */
-              public function getMessage() {
-                    return $this->message;
-              }
+          /**
+           * Get stored message.
+           *
+           * @return string
+           *   The stored message.
+           */
+          public function getMessage() {
+            return $this->message;
+          }
 
-            };
-            return $mockExecResult;
-        }
+        };
+        return $mockExecResult;
+      }
     };
 
     $result = $method->invokeArgs($this->generator, [NULL]);

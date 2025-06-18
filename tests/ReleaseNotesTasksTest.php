@@ -6,8 +6,6 @@ use Gizra\RoboReleaseNotes\ReleaseNotesTasks;
 use PHPUnit\Framework\TestCase;
 use Robo\Contract\TaskInterface;
 use Robo\Result;
-use Robo\Robo;
-use League\Container\Container;
 
 /**
  * Tests for ReleaseNotesTasks trait.
@@ -26,75 +24,151 @@ class ReleaseNotesTasksTest extends TestCase {
   protected function setUp(): void {
     parent::setUp();
 
-    // Create an anonymous class that uses the trait and implements TaskInterface.
-    $this->taskRunner = new class implements TaskInterface {
+    // Create an anonymous class that uses the trait and implements
+    // TaskInterface.
+    $this->taskRunner = new class() implements TaskInterface {
       use ReleaseNotesTasks;
 
+      /**
+       * Generate release notes mock implementation.
+       *
+       * @param string|null $tag
+       *   Optional tag parameter.
+       *
+       * @return \Robo\Result
+       *   Mock result object.
+       */
       public function generateReleaseNotes(?string $tag = NULL): Result {
-        // Mock implementation that doesn't rely on Robo container
-        return new class extends Result {
+        // Mock implementation that doesn't rely on Robo container.
+        return new class() extends Result {
+
+          /**
+           * Mock constructor.
+           */
           public function __construct() {
-            // Bypass parent constructor
+            // Bypass parent constructor.
           }
-          
+
+          /**
+           * Mock wasSuccessful method.
+           *
+           * @return bool
+           *   Success status based on environment variables.
+           */
           public function wasSuccessful(): bool {
-            return getenv('GITHUB_ACCESS_TOKEN') !== false && getenv('GITHUB_USERNAME') !== false;
+            return getenv('GITHUB_ACCESS_TOKEN') !== FALSE && getenv('GITHUB_USERNAME') !== FALSE;
           }
+
         };
       }
 
       /**
        * Mock methods that would normally come from Robo\Tasks.
+       *
+       * @param string $message
+       *   Message to output.
        */
       public function say($message) {
         echo $message . "\n";
       }
 
       /**
+       * Mock confirm method.
        *
+       * @param string $question
+       *   Question to ask.
+       *
+       * @return bool
+       *   Always returns TRUE for tests.
        */
       public function confirm($question) {
         return TRUE;
       }
 
       /**
+       * Mock exec method.
        *
+       * @param string $command
+       *   Command to execute.
+       *
+       * @return null
+       *   Always returns NULL for tests.
        */
-      public function _exec($command) {
+      public function execCommand($command) {
         return TRUE;
       }
 
       /**
+       * Mock taskExec method.
        *
+       * @param string $command
+       *   Command to execute.
+       *
+       * @return object
+       *   Mock task execution object.
        */
       public function taskExec($command) {
         return new class($command) {
+          /**
+           * Command storage.
+           *
+           * @var string
+           */
           private $command;
 
+          /**
+           * Mock constructor.
+           *
+           * @param string $command
+           *   Command to store.
+           */
           public function __construct($command) {
             $this->command = $command;
           }
 
           /**
+           * Mock printOutput method.
            *
+           * @param mixed $output
+           *   Output to print.
+           *
+           * @return $this
+           *   Returns self for chaining.
            */
           public function printOutput($output) {
             return $this;
           }
 
           /**
+           * Mock run method.
            *
+           * @return object
+           *   Mock result object.
            */
           public function run() {
             return new class('') {
+              /**
+               * Message storage.
+               *
+               * @var string
+               */
               private $message;
 
+              /**
+               * Mock constructor.
+               *
+               * @param string $message
+               *   Message to store.
+               */
               public function __construct($message) {
                 $this->message = $message;
               }
 
               /**
+               * Get stored message.
                *
+               * @return string
+               *   The stored message.
                */
               public function getMessage() {
                 return $this->message;
@@ -106,15 +180,35 @@ class ReleaseNotesTasksTest extends TestCase {
         };
       }
 
-      // Required methods for TaskInterface
+      /**
+       * Required methods for TaskInterface.
+       *
+       * @return \Robo\Result
+       *   Success result.
+       */
       public function run() {
         return Result::success($this);
       }
 
+      /**
+       * Get task state.
+       *
+       * @return null
+       *   Always returns NULL.
+       */
       public function getState() {
         return NULL;
       }
 
+      /**
+       * Set task state.
+       *
+       * @param mixed $state
+       *   State to set.
+       *
+       * @return $this
+       *   Returns self.
+       */
       public function setState($state) {
         return $this;
       }
