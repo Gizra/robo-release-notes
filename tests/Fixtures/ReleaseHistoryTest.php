@@ -139,16 +139,16 @@ class ReleaseHistoryTest extends TestCase {
 
     // Simulate hotfix commits.
     $commits = [
-          [
-            'hash' => 'hotfix123',
-            'subject' => 'Hotfix: Critical security vulnerability (#999)',
-            'body' => 'Emergency fix for CVE-2023-1234',
-          ],
-          [
-            'hash' => 'hotfix124',
-            'subject' => 'Merge pull request #1000 from security/urgent-patch',
-            'body' => 'Apply security patch immediately',
-          ],
+      [
+        'hash' => 'hotfix123',
+        'subject' => 'Hotfix: Critical security vulnerability (#999)',
+        'body' => 'Emergency fix for CVE-2023-1234',
+      ],
+      [
+        'hash' => 'hotfix124',
+        'subject' => 'Merge pull request #1000 from security/urgent-patch',
+        'body' => 'Apply security patch immediately',
+      ],
     ];
 
     $result = $method->invokeArgs($this->generator, [$commits]);
@@ -187,24 +187,24 @@ class ReleaseHistoryTest extends TestCase {
     $method = $this->getPrivateMethod('extractPrNumbers');
 
     $commits = [
-          // Standard merge commit.
-          [
-            'hash' => 'merge1',
-            'subject' => 'Merge pull request #150 from feature/user-profiles',
-            'body' => 'Add user profile management',
-          ],
-          // Squash and merge.
-          [
-            'hash' => 'squash1',
-            'subject' => 'Add user profile management (#151)',
-            'body' => 'Squashed commit of multiple changes',
-          ],
-          // Rebase and merge (no explicit merge commit).
-          [
-            'hash' => 'rebase1',
-            'subject' => 'Add profile photo upload feature',
-            'body' => 'Related to #152',
-          ],
+      // Standard merge commit.
+      [
+        'hash' => 'merge1',
+        'subject' => 'Merge pull request #150 from feature/user-profiles',
+        'body' => 'Add user profile management',
+      ],
+      // Squash and merge.
+      [
+        'hash' => 'squash1',
+        'subject' => 'Add user profile management (#151)',
+        'body' => 'Squashed commit of multiple changes',
+      ],
+      // Rebase and merge (no explicit merge commit).
+      [
+        'hash' => 'rebase1',
+        'subject' => 'Add profile photo upload feature',
+        'body' => 'Related to #152',
+      ],
     ];
 
     $result = $method->invokeArgs($this->generator, [$commits]);
@@ -222,16 +222,16 @@ class ReleaseHistoryTest extends TestCase {
 
     // Simulate dependency update commits.
     $commits = [
-          [
-            'hash' => 'deps1',
-            'subject' => 'Bump lodash from 4.17.15 to 4.17.21 (#400)',
-            'body' => 'Bumps lodash from 4.17.15 to 4.17.21.',
-          ],
-          [
-            'hash' => 'deps2',
-            'subject' => 'Update symfony/console requirement from ^4.0 to ^5.0 (#401)',
-            'body' => 'Updates the requirements on symfony/console',
-          ],
+      [
+        'hash' => 'deps1',
+        'subject' => 'Bump lodash from 4.17.15 to 4.17.21 (#400)',
+        'body' => 'Bumps lodash from 4.17.15 to 4.17.21.',
+      ],
+      [
+        'hash' => 'deps2',
+        'subject' => 'Update symfony/console requirement from ^4.0 to ^5.0 (#401)',
+        'body' => 'Updates the requirements on symfony/console',
+      ],
     ];
 
     $result = $method->invokeArgs($this->generator, [$commits]);
@@ -248,16 +248,16 @@ class ReleaseHistoryTest extends TestCase {
 
     // Simulate direct commits without PR workflow.
     $commits = [
-          [
-            'hash' => 'direct1',
-            'subject' => 'Fix spelling mistakes in documentation',
-            'body' => 'Various typo fixes',
-          ],
-          [
-            'hash' => 'direct2',
-            'subject' => 'Update version number to 2.1.0',
-            'body' => 'Prepare for release',
-          ],
+      [
+        'hash' => 'direct1',
+        'subject' => 'Fix spelling mistakes in documentation',
+        'body' => 'Various typo fixes',
+      ],
+      [
+        'hash' => 'direct2',
+        'subject' => 'Update version number to 2.1.0',
+        'body' => 'Prepare for release',
+      ],
     ];
 
     $result = $method->invokeArgs($this->generator, [$commits]);
@@ -273,30 +273,30 @@ class ReleaseHistoryTest extends TestCase {
     $method = $this->getPrivateMethod('extractPrNumbers');
 
     $commits = [
-          // PR merge.
-          [
-            'hash' => 'pr1',
-            'subject' => 'Merge pull request #500 from feature/api-v2',
-            'body' => 'Add API v2 endpoints',
-          ],
-          // Direct commit.
-          [
-            'hash' => 'direct1',
-            'subject' => 'Fix typo in API documentation',
-            'body' => 'Quick fix',
-          ],
-          // Squash merge.
-          [
-            'hash' => 'squash1',
-            'subject' => 'Implement rate limiting (#501)',
-            'body' => 'Add rate limiting to API endpoints',
-          ],
-          // Another direct commit.
-          [
-            'hash' => 'direct2',
-            'subject' => 'Update changelog',
-            'body' => 'Add entries for v2.2.0',
-          ],
+      // PR merge.
+      [
+        'hash' => 'pr1',
+        'subject' => 'Merge pull request #500 from feature/api-v2',
+        'body' => 'Add API v2 endpoints',
+      ],
+      // Direct commit.
+      [
+        'hash' => 'direct1',
+        'subject' => 'Fix typo in API documentation',
+        'body' => 'Quick fix',
+      ],
+      // Squash merge.
+      [
+        'hash' => 'squash1',
+        'subject' => 'Implement rate limiting (#501)',
+        'body' => 'Add rate limiting to API endpoints',
+      ],
+      // Another direct commit.
+      [
+        'hash' => 'direct2',
+        'subject' => 'Update changelog',
+        'body' => 'Add entries for v2.2.0',
+      ],
     ];
 
     $result = $method->invokeArgs($this->generator, [$commits]);

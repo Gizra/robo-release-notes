@@ -11,6 +11,7 @@ use Robo\Result;
  * Tests for ReleaseNotesTasks trait.
  */
 class ReleaseNotesTasksTest extends TestCase {
+
   /**
    * Test class that uses the ReleaseNotesTasks trait.
    *
@@ -27,6 +28,7 @@ class ReleaseNotesTasksTest extends TestCase {
     // Create an anonymous class that uses the trait and implements
     // TaskInterface.
     $this->taskRunner = new class() implements TaskInterface {
+
       use ReleaseNotesTasks;
 
       /**
@@ -138,6 +140,7 @@ class ReleaseNotesTasksTest extends TestCase {
            */
           public function run() {
             return new class('') {
+
               /**
                * Message storage.
                *

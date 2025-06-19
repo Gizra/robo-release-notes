@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
  * Tests for ReleaseNotesGenerator class.
  */
 class ReleaseNotesGeneratorTest extends TestCase {
+
   /**
    * Mock task context.
    *
@@ -33,6 +34,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
 
     // Create a mock task object with required methods.
     $this->mockTask = new class() implements TaskInterface {
+
       /**
        * Callback function for taskExec method.
        *
@@ -130,6 +132,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
        */
       private function createDefaultTaskExecResult() {
         return new class('') {
+
           /**
            * Message storage.
            *
@@ -189,33 +192,33 @@ class ReleaseNotesGeneratorTest extends TestCase {
 
     // Test standard merge commit.
     $commits = [
-          [
-            'hash' => 'abc123',
-            'subject' => 'Merge pull request #123 from feature/branch',
-            'body' => 'Add new feature',
-          ],
+      [
+        'hash' => 'abc123',
+        'subject' => 'Merge pull request #123 from feature/branch',
+        'body' => 'Add new feature',
+      ],
     ];
     $result = $method->invokeArgs($this->generator, [$commits]);
     $this->assertEquals([123], $result);
 
     // Test squash and merge commit.
     $commits = [
-          [
-            'hash' => 'def456',
-            'subject' => 'Add new feature (#124)',
-            'body' => '',
-          ],
+      [
+        'hash' => 'def456',
+        'subject' => 'Add new feature (#124)',
+        'body' => '',
+      ],
     ];
     $result = $method->invokeArgs($this->generator, [$commits]);
     $this->assertEquals([124], $result);
 
     // Test multiple PRs in one commit.
     $commits = [
-          [
-            'hash' => 'ghi789',
-            'subject' => 'Fix issue #125 and #126',
-            'body' => 'Related to #127',
-          ],
+      [
+        'hash' => 'ghi789',
+        'subject' => 'Fix issue #125 and #126',
+        'body' => 'Related to #127',
+      ],
     ];
     $result = $method->invokeArgs($this->generator, [$commits]);
     // Should extract all PR references from the commit.
@@ -223,11 +226,11 @@ class ReleaseNotesGeneratorTest extends TestCase {
 
     // Test no PR numbers.
     $commits = [
-          [
-            'hash' => 'jkl012',
-            'subject' => 'Regular commit message',
-            'body' => 'No PR references here',
-          ],
+      [
+        'hash' => 'jkl012',
+        'subject' => 'Regular commit message',
+        'body' => 'No PR references here',
+      ],
     ];
     $result = $method->invokeArgs($this->generator, [$commits]);
     $this->assertEquals([], $result);
@@ -280,6 +283,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
     $this->mockTask->taskExecCallback = function ($command) {
       if (strpos($command, 'git remote get-url origin') !== FALSE) {
         $mockExecResult = new class('git@github.com:Gizra/test-repo.git') {
+
           /**
            * Message storage.
            *
@@ -398,6 +402,7 @@ class ReleaseNotesGeneratorTest extends TestCase {
     $this->mockTask->taskExecCallback = function ($command) {
       if (strpos($command, 'git log --pretty=format') !== FALSE) {
         $mockExecResult = new class("abc123¬¬Fix bug¬¬Detailed description\ndef456¬¬Add feature¬¬Another description") {
+
           /**
            * Message storage.
            *
