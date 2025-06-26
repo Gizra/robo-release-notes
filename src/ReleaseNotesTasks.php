@@ -2,16 +2,13 @@
 
 namespace Gizra\RoboReleaseNotes;
 
-use Robo\Tasks;
 use Robo\Result;
 use Exception;
 
 /**
  * Robo tasks for generating release notes from GitHub PRs and issues.
  */
-trait ReleaseNotesTasks
-{
-    use Tasks;
+trait ReleaseNotesTasks {
 
     /**
      * Generate release notes from GitHub PRs and issues.
